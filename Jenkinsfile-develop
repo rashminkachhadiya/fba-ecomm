@@ -1,0 +1,30 @@
+pipeline {
+agent {
+      node {
+      label 'master'
+    }
+}
+
+ 
+ stages { 
+   stage ('Git Pull Automations fo euro-parts Projects') {
+        steps {
+          sh """
+          sudo ansible-playbook /home/ubuntu/ansible/euro-parts.yml -vv
+          """
+        }
+    }
+ }
+
+post {
+
+         success {
+         emailext  attachLog: "true", body: '''${SCRIPT, template="groovy-html.template"}''',mimeType: 'text/html',subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}",to: "parthhala@topsinfosolutions.com, jayana@topsinfosolutions.com ,jignesh@topsinfosolutions.com"
+         }
+         failure {
+        
+          emailext  attachLog: "true", body: '''${SCRIPT, template="groovy-html.template"}''',mimeType: 'text/html',subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}",to: "parthhala@topsinfosolutions.com, jayana@topsinfosolutions.com ,jignesh@topsinfosolutions.com"
+    }
+
+        }
+}
